@@ -10,16 +10,19 @@
 using namespace std;
 namespace fs = filesystem;
 
-struct Stack {
-    // Определение узла списка
-    struct Node {
+class Stack {
+private:
+    class Node {
+    public:
         string data;
         Node* next;
+
         Node(const string& value) : data(value), next(nullptr) {}
     };
 
     Node* top;
 
+public:
     Stack() : top(nullptr) {}
 
     ~Stack() {
@@ -59,6 +62,6 @@ struct Stack {
 };
 
 void stack(string fileName, string actions);
-bool emptyFile (string fileName);
+bool emptyFile(string fileName);
 
 #endif // STACK_H_INCLUDED

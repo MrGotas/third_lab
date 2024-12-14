@@ -9,17 +9,21 @@
 using namespace std;
 namespace fs = filesystem;
 
-struct Queue {
-    struct Node {
+class Queue {
+private:
+    class Node {
+    public:
         string data;
         Node* next;
         Node* prev;
+
         Node(const string& value) : data(value), next(nullptr), prev(nullptr) {}
     };
 
     Node* head;
     Node* tail;
 
+public:
     Queue() : head(nullptr), tail(nullptr) {}
 
     ~Queue() {
@@ -67,6 +71,6 @@ struct Queue {
 };
 
 void queue(string filename, string actions);
-bool emptyFile (string fileName);
+bool emptyFile(string fileName);
 
 #endif // QUEUE_H_INCLUDED

@@ -9,11 +9,13 @@
 using namespace std;
 namespace fs = filesystem;
 
-struct StrArray {
-    string* data;   
-    size_t size = 0; // размер
+class StrArray {
+private:
+    string* data;
+    size_t size; // размер
     size_t capacity; // ёмкость
 
+public:
     StrArray(size_t initialCapacity = 5) {
         size = 0;
         capacity = initialCapacity; // Устанавливаем начальную емкость
@@ -31,7 +33,7 @@ struct StrArray {
         for (size_t i = 0; i < size; i++) {
             newData[i] = data[i];
         }
-        delete[] data; 
+        delete[] data;
         data = newData; //указатель на новый массив
         capacity = newCapacity;
     }
@@ -105,6 +107,6 @@ struct StrArray {
 
 void massive(string fileName, string actions);
 bool toNum(const string& temporary, int& index);
-bool emptyFile (string fileName);
+bool emptyFile(string fileName);
 
 #endif // MASSIVE_H_INCLUDED

@@ -9,8 +9,10 @@
 using namespace std;
 namespace fs = filesystem;
 
-struct HashTable {
-    struct KeyValuePair {
+class HashTable {
+private:
+    class KeyValuePair {
+    public:
         string key;
         string value;
         KeyValuePair* next;
@@ -21,6 +23,15 @@ struct HashTable {
     KeyValuePair** table;
     size_t tableSize;
 
+    size_t hashFunction(const string& key) const {
+        size_t hash = 0;
+        for (char c : key) {
+            hash = hash * 31 + c;
+        }
+        return hash % tableSize;
+    }
+
+public:
     HashTable(size_t initialCapacity = 10) : tableSize(initialCapacity) {
         table = new KeyValuePair*[tableSize];
         for (size_t i = 0; i < tableSize; ++i) {
@@ -38,14 +49,6 @@ struct HashTable {
             }
         }
         delete[] table;
-    }
-
-    size_t hashFunction(const string& key) const {
-        size_t hash = 0;
-        for (char c : key) {
-            hash = hash * 31 + c;
-        }
-        return hash % tableSize;
     }
 
     void push(const string& key, const string& value) {

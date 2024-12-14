@@ -9,18 +9,21 @@
 using namespace std;
 namespace fs = filesystem;
 
-struct ListD {
-    // Определение узла списка
-    struct Node {
+class ListD {
+private:
+    class Node {
+    public:
         string data;
         Node* next;
         Node* prev;
+
         Node(const string& value) : data(value), next(nullptr), prev(nullptr) {}
     };
 
     Node* head;
     Node* tail;
 
+public:
     ListD() : head(nullptr), tail(nullptr) {}
 
     ~ListD() {
@@ -139,6 +142,6 @@ struct ListD {
 };
 
 void listD(string file, string actions);
-bool emptyFile (string fileName);
+bool emptyFile(string fileName);
 
 #endif // LISTD_H_INCLUDED
