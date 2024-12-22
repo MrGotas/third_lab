@@ -1,13 +1,7 @@
 #ifndef QUEUE_H_INCLUDED
 #define QUEUE_H_INCLUDED
 
-#include <iostream>
-#include <filesystem>
-#include <fstream>
-#include <string>
-
-using namespace std;
-namespace fs = filesystem;
+#include "includes.h"
 
 class Queue {
 private:
@@ -68,9 +62,14 @@ public:
         }
         file.close();
     }
-};
 
-void queue(string filename, string actions);
-bool emptyFile(string fileName);
+    Node* getHead() const {
+        return head;
+    }
+
+    Node* getTail() const {
+        return tail;
+    }
+};
 
 #endif // QUEUE_H_INCLUDED

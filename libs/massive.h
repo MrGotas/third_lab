@@ -1,13 +1,7 @@
 #ifndef MASSIVE_H_INCLUDED
 #define MASSIVE_H_INCLUDED
 
-#include <iostream>
-#include <filesystem>
-#include <fstream>
-#include <string>
-
-using namespace std;
-namespace fs = filesystem;
+#include "includes.h"
 
 class StrArray {
 private:
@@ -21,7 +15,7 @@ public:
         capacity = initialCapacity; // Устанавливаем начальную емкость
         data = new string[capacity]; // Выделяем память под массив
     }
-
+    
     // Деструктор
     ~StrArray() {
         delete[] data;
@@ -67,7 +61,7 @@ public:
 
     bool get(size_t index, string& result) {
         if (index < 0 || index >= size) {
-            cout << "10:ERROR: Index out of range." << endl;
+            //cout << "10:ERROR: Index out of range." << endl;
             return false;
         }
         result = data[index];
@@ -103,10 +97,10 @@ public:
         }
         file.close();
     }
-};
 
-void massive(string fileName, string actions);
-bool toNum(const string& temporary, int& index);
-bool emptyFile(string fileName);
+    size_t getCapacity() const {
+        return capacity;
+    }
+};
 
 #endif // MASSIVE_H_INCLUDED

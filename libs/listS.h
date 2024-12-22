@@ -1,13 +1,7 @@
 #ifndef LISTS_H_INCLUDED
 #define LISTS_H_INCLUDED
 
-#include <iostream>
-#include <filesystem>
-#include <fstream>
-#include <string>
-
-using namespace std;
-namespace fs = filesystem;
+#include "includes.h"
 
 class ListS {
 private:
@@ -121,9 +115,15 @@ public:
         }
         file.close();
     }
-};
 
-void listS(string file, string actions);
-bool emptyFile(string fileName);
+    // Публичные методы для получения значений head и tail
+    Node* getHead() const {
+        return head;
+    }
+
+    Node* getTail() const {
+        return tail;
+    }
+};
 
 #endif // LISTS_H_INCLUDED

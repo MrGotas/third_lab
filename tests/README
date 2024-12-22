@@ -1,0 +1,1 @@
+g++ -std=c++17 -isystem /usr/include/gtest -pthread test.cpp ../massive.cpp /usr/lib/libgtest.a /usr/lib/libgtest_main.a -o StrArrayTest

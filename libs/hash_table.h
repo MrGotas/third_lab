@@ -1,13 +1,7 @@
 #ifndef HASH_TABLE_H_INCLUDED
 #define HASH_TABLE_H_INCLUDED
 
-#include <iostream>
-#include <filesystem>
-#include <fstream>
-#include <string>
-
-using namespace std;
-namespace fs = filesystem;
+#include "includes.h"
 
 class HashTable {
 private:
@@ -124,10 +118,10 @@ public:
         }
         file.close();
     }
-};
 
-void hash_table(string file, string actions);
-bool toNum(const string& temporary, int& index);
-bool emptyFile (string fileName);
+    size_t getCapacity() const {
+        return tableSize;
+    }
+};
 
 #endif // HASH_TABLE_H_INCLUDED

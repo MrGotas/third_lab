@@ -1,14 +1,7 @@
 #ifndef STACK_H_INCLUDED
 #define STACK_H_INCLUDED
 
-#include "massive.h"
-#include <iostream>
-#include <filesystem>
-#include <fstream>
-#include <string>
-
-using namespace std;
-namespace fs = filesystem;
+#include "includes.h"
 
 class Stack {
 private:
@@ -58,6 +51,11 @@ public:
             current = current->next;
         }
         file.close();
+    }
+
+    // Публичный метод для получения значения top
+    Node* getTop() const {
+        return top;
     }
 };
 
