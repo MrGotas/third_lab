@@ -134,6 +134,39 @@ public:
         file.close();
     }
 
+    void saveToBinaryFile(const string& filename) {
+        std::ofstream file(filename, std::ios::binary);
+        Node* current = head;
+        while (current != nullptr) {
+            size_t dataSize = current->data.size();
+            file.write(reinterpret_cast<char*>(&dataSize), sizeof(dataSize));
+            file.write(current->data.c_str(), dataSize);
+            current = current->next;
+        }
+        file.close();
+    }
+
+    void loadFromBinaryFile(const string& filename) {
+        std::ifstream file(filename, std::ios::binary);
+        while (file) {
+            size_t dataSize;
+            if (!file.read(reinterpret_cast<char*>(&dataSize), sizeof(dataSize))) break;
+
+            string data(dataSize, '\0');
+            file.read(&data[0], dataSize);
+
+            pusht(data);
+        }
+        file.close();
+    }
+
+    string getHeadData() const {
+        if (head != nullptr) {
+            return head->data;
+        }
+        return "";
+    }
+
     // Публичные методы для получения значений head и tail
     Node* getHead() const {
         return head;

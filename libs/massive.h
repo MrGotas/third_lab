@@ -98,6 +98,46 @@ public:
         file.close();
     }
 
+    // Метод сериализации
+    void serialize(const string& filename) const {
+        ofstream file(filename, ios::binary);
+        if (!file) {
+            cerr << "Error opening file for serialization." << endl;
+            return;
+        }
+        file.write(reinterpret_cast<const char*>(&size), sizeof(size));
+        file.write(reinterpret_cast<const char*>(&capacity), sizeof(capacity));
+        for (size_t i = 0; i < size; ++i) {
+            size_t len = data[i].size();
+            file.write(reinterpret_cast<const char*>(&len), sizeof(len));
+            file.write(data[i].c_str(), len);
+        }
+        file.close();
+    }
+
+    // Метод десериализации
+    void deserialize(const string& filename) {
+        ifstream file(filename, ios::binary);
+        if (!file) {
+            cerr << "Error opening file for deserialization." << endl;
+            return;
+        }
+        file.read(reinterpret_cast<char*>(&size), sizeof(size));
+        file.read(reinterpret_cast<char*>(&capacity), sizeof(capacity));
+        delete[] data;
+        data = new string[capacity];
+        for (size_t i = 0; i < size; ++i) {
+            size_t len;
+            file.read(reinterpret_cast<char*>(&len), sizeof(len));
+            char* buffer = new char[len + 1];
+            file.read(buffer, len);
+            buffer[len] = '\0';
+            data[i] = string(buffer);
+            delete[] buffer;
+        }
+        file.close();
+    }
+
     size_t getCapacity() const {
         return capacity;
     }

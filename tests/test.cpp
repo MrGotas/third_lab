@@ -118,6 +118,36 @@ TEST(StrArrayTest, SaveToFile) {
     remove("test.txt");
 }
 
+TEST(StrArrayTest, SerializeDeserialize) {
+    // Создаем объект StrArray и добавляем в него несколько строк
+    StrArray array;
+    array.push("Hello");
+    array.push("World");
+    array.push("Google");
+    array.push("Test");
+
+    // Сериализуем объект в файл
+    array.serialize("test_serialize.bin");
+
+    // Создаем новый объект StrArray
+    StrArray newArray;
+
+    // Десериализуем объект из файла
+    newArray.deserialize("test_serialize.bin");
+
+    // Проверяем, что новый объект содержит те же данные, что и исходный
+    ASSERT_EQ(array.sizeM(), newArray.sizeM());
+    ASSERT_EQ(array.getCapacity(), newArray.getCapacity());
+
+    for (size_t i = 0; i < array.sizeM(); ++i) {
+        string originalValue;
+        string newValue;
+        ASSERT_TRUE(array.get(i, originalValue));
+        ASSERT_TRUE(newArray.get(i, newValue));
+        ASSERT_EQ(originalValue, newValue);
+    }
+}
+
 // тест хеш таблицы --------------------------------------------------------------------------------------------------
 
 TEST(HashTableTest, CreateHashTable) {
@@ -203,6 +233,58 @@ TEST(HashTableTest, LargeNumberOfOperations) {
         string result;
         EXPECT_FALSE(table.get("key" + to_string(i), result));
     }
+}
+
+// Тест для функции saveToBinaryFile
+TEST(HashTableTest, SaveToBinaryFile) {
+    // Создаем хеш-таблицу и добавляем одну пару
+    HashTable hashTable;
+    hashTable.push("name", "John Doe");
+
+    // Сохраняем хеш-таблицу в бинарный файл
+    const string filename = "test_data.bin";
+    hashTable.saveToBinaryFile(filename);
+
+    // Открываем файл и проверяем его содержимое
+    std::ifstream file(filename, std::ios::binary);
+    ASSERT_TRUE(file.is_open());
+
+    size_t keySize, valueSize;
+    string key, value;
+
+    // Проверяем запись одной пары
+    ASSERT_TRUE(file.read(reinterpret_cast<char*>(&keySize), sizeof(keySize)));
+    key.resize(keySize);
+    file.read(&key[0], keySize);
+    ASSERT_EQ(key, "name");
+
+    ASSERT_TRUE(file.read(reinterpret_cast<char*>(&valueSize), sizeof(valueSize)));
+    value.resize(valueSize);
+    file.read(&value[0], valueSize);
+    ASSERT_EQ(value, "John Doe");
+
+    file.close();
+}
+
+// Тест для функции loadFromBinaryFile
+TEST(HashTableTest, LoadFromBinaryFile) {
+    // Создаем хеш-таблицу и добавляем одну пару
+    HashTable hashTable;
+    hashTable.push("name", "John Doe");
+
+    // Сохраняем хеш-таблицу в бинарный файл
+    const string filename = "test_data.bin";
+    hashTable.saveToBinaryFile(filename);
+
+    // Создаем новую хеш-таблицу для загрузки данных
+    HashTable loadedTable;
+    loadedTable.loadFromBinaryFile(filename);
+
+    // Проверяем, что данные загружены корректно
+    std::string value;
+    ASSERT_TRUE(loadedTable.get("name", value));
+    ASSERT_EQ(value, "John Doe");
+    fs::remove(filename);
 }
 
 // тест двусвязного списка -------------------------------------------------------------------------------------------
@@ -323,6 +405,61 @@ TEST(ListDTest, SaveToFile) {
     remove(filename.c_str());
 }
 
+// Тест для функции saveToBinaryFile
+TEST(ListDTest, SaveToBinaryFile) {
+    // Создаем список и добавляем один элемент
+    ListD list;
+    list.pusht("First");
+
+    // Сохраняем список в бинарный файл
+    const string filename = "list_data.bin";
+    list.saveToBinaryFile(filename);
+
+    // Открываем файл и проверяем его содержимое
+    std::ifstream file(filename, std::ios::binary);
+    ASSERT_TRUE(file.is_open());
+
+    size_t dataSize;
+    string data;
+
+    // Проверяем сохранение одного элемента
+    ASSERT_TRUE(file.read(reinterpret_cast<char*>(&dataSize), sizeof(dataSize)));
+    data.resize(dataSize);
+    file.read(&data[0], dataSize);
+    ASSERT_EQ(data, "First");
+
+    file.close();
+
+    // Удаляем тестовый файл
+    remove(filename.c_str());
+}
+
+// Тест для функции loadFromBinaryFile
+TEST(ListDTest, LoadFromBinaryFile) {
+    // Создаем список и добавляем один элемент
+    ListD list;
+    list.pusht("First");
+
+    // Сохраняем список в бинарный файл
+    const string filename = "list_data.bin";
+    list.saveToBinaryFile(filename);
+
+    // Создаем новый список и загружаем из бинарного файла
+    ListD newList;
+    newList.loadFromBinaryFile(filename);
+
+    // Проверяем, что данные загружены корректно
+    string currentData = newList.getHeadData();  // Получаем данные из головы списка
+    ASSERT_NE(currentData, "");
+
+    // Проверяем, что загружен именно тот элемент
+    ASSERT_EQ(currentData, "First");
+
+    // Удаляем тестовый файл
+    remove(filename.c_str());
+}
+
+
 // тест односвязного списка ------------------------------------------------------------------------------------------
 
 TEST(ListSTest, CreateList) {
@@ -425,7 +562,28 @@ TEST(ListSTest, SaveToFile) {
     EXPECT_EQ(file_contents, "value3;value2;value1");
 
     // Удаление файла после теста
-    remove(filename.c_str());
+    fs::remove(filename);
+}
+
+TEST(ListSTest, SerializationDeserialization) {
+    // Создаем список и добавляем одно значение
+    ListS list;
+    list.pusht("test_value");
+
+    // Сериализуем список в бинарный файл
+    list.saveToBinaryFile("test_serialization.bin");
+
+    // Создаем новый список и десериализуем данные из файла
+    ListS newList;
+    newList.loadFromBinaryFile("test_serialization.bin");
+
+    // Проверяем, что десериализованный список содержит то же значение
+    ASSERT_NE(newList.getHead(), nullptr);
+    ASSERT_EQ(newList.getHead()->data, "test_value");
+    ASSERT_NE(newList.getTail(), nullptr);
+    ASSERT_EQ(newList.getTail()->data, "test_value");
+
+    fs::remove("test_serialization.bin");
 }
 
 // тест очереди ------------------------------------------------------------------------------------------------------
@@ -483,6 +641,27 @@ TEST(QueueTest, SaveToFile) {
     remove(filename.c_str());
 }
 
+TEST(QueueTest, SerializationDeserialization) {
+    // Создаем очередь и добавляем одно значение
+    Queue queue;
+    queue.push("test_value");
+
+    // Сериализуем очередь в бинарный файл
+    queue.saveToBinaryFile("test_serialization.bin");
+
+    // Создаем новую очередь и десериализуем данные из файла
+    Queue newQueue;
+    newQueue.loadFromBinaryFile("test_serialization.bin");
+
+    // Проверяем, что десериализованная очередь содержит то же значение
+    ASSERT_NE(newQueue.getHead(), nullptr);
+    ASSERT_EQ(newQueue.getHead()->data, "test_value");
+    ASSERT_NE(newQueue.getTail(), nullptr);
+    ASSERT_EQ(newQueue.getTail()->data, "test_value");
+
+    fs::remove("test_serialization.bin");
+}
+
 // тест стека --------------------------------------------------------------------------------------------------------
 TEST(StackTest, CreateStack) {
     Stack stack;
@@ -531,6 +710,25 @@ TEST(StackTest, SaveToFile) {
 
     // Удаление файла после теста
     remove(filename.c_str());
+}
+
+TEST(StackTest, SerializationDeserialization) {
+    // Создаем стек и добавляем одно значение
+    Stack stack;
+    stack.push("test_value");
+
+    // Сериализуем стек в бинарный файл
+    stack.saveToBinaryFile("test_serialization.bin");
+
+    // Создаем новый стек и десериализуем данные из файла
+    Stack newStack;
+    newStack.loadFromBinaryFile("test_serialization.bin");
+
+    // Проверяем, что десериализованный стек содержит то же значение
+    ASSERT_NE(newStack.getTop(), nullptr);
+    ASSERT_EQ(newStack.getTop()->data, "test_value");
+
+    fs::remove("test_serialization.bin");
 }
 
 int main(int argc, char **argv) {

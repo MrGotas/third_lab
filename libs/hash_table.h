@@ -93,6 +93,7 @@ public:
         return false; // Ключ не найден
     }
 
+    // Сохранение в текстовый файл
     void saveToFile(const string& filename) const {
         ofstream file(filename);
         for (size_t i = 0; i < tableSize; ++i) {
@@ -105,6 +106,7 @@ public:
         file.close();
     }
 
+    // Загрузка из текстового файла
     void loadFromFile(const string& filename) {
         ifstream file(filename);
         string line;
@@ -115,6 +117,43 @@ public:
                 string value = line.substr(pos + 1);
                 push(key, value);
             }
+        }
+        file.close();
+    }
+
+    // Сохранение в бинарный файл
+    void saveToBinaryFile(const string& filename) const {
+        ofstream file(filename, ios::binary);
+        for (size_t i = 0; i < tableSize; ++i) {
+            KeyValuePair* current = table[i];
+            while (current != nullptr) {
+                size_t keySize = current->key.size();
+                size_t valueSize = current->value.size();
+                file.write(reinterpret_cast<char*>(&keySize), sizeof(keySize));
+                file.write(current->key.c_str(), keySize);
+                file.write(reinterpret_cast<char*>(&valueSize), sizeof(valueSize));
+                file.write(current->value.c_str(), valueSize);
+                current = current->next;
+            }
+        }
+        file.close();
+    }
+
+    // Загрузка из бинарного файла
+    void loadFromBinaryFile(const string& filename) {
+        ifstream file(filename, ios::binary);
+        while (file) {
+            size_t keySize, valueSize;
+            if (!file.read(reinterpret_cast<char*>(&keySize), sizeof(keySize))) break;
+
+            string key(keySize, '\0');
+            file.read(&key[0], keySize);
+
+            file.read(reinterpret_cast<char*>(&valueSize), sizeof(valueSize));
+            string value(valueSize, '\0');
+            file.read(&value[0], valueSize);
+
+            push(key, value);
         }
         file.close();
     }

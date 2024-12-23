@@ -1,1 +1,5 @@
-g++ -std=c++17 -isystem /usr/include/gtest -pthread test.cpp ../massive.cpp /usr/lib/libgtest.a /usr/lib/libgtest_main.a -o StrArrayTest
+g++ test.cpp -lgtest -lgtest_main -pthread -o test_res
+make
+make coverage
+cd out
+xdg-open index.html
