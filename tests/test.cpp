@@ -524,25 +524,33 @@ TEST(ListSTest, DeleteTail) {
     EXPECT_EQ(list.getTail()->data, "value1");
 }
 
-// Тест на удаление элемента по значению
-TEST(ListSTest, DeleteValue) {
+TEST(ListSTest, DelvHeadElement) {
     ListS list;
     list.pushh("value1");
     list.pushh("value2");
-    list.pushh("value3");
-    list.delv("value2");
-    EXPECT_EQ(list.getHead()->data, "value3");
-    EXPECT_EQ(list.getHead()->next->data, "value1");
-    EXPECT_EQ(list.getTail()->data, "value1");
+    EXPECT_EQ(list.delv("value2"), "-");
+    EXPECT_EQ(list.getHead()->data, "value1");
+}
 
-    testing::internal::CaptureStdout();
-    list.delv("value4"); // Элемент не найден
-    string output = testing::internal::GetCapturedStdout();
-    EXPECT_EQ(output, "Элемент не найден.\n");
-    // Проверка на то, что список не изменился
-    EXPECT_EQ(list.getHead()->data, "value3");
-    EXPECT_EQ(list.getHead()->next->data, "value1");
-    EXPECT_EQ(list.getTail()->data, "value1");
+TEST(ListSTest, DelhSingleElementList) {
+    ListS list;
+    list.pushh("value1");
+    EXPECT_EQ(list.delh(), "good");
+    EXPECT_EQ(list.getHead(), nullptr);
+    EXPECT_EQ(list.getTail(), nullptr);
+}
+
+// Тест для метода delt
+TEST(ListSTest, DeltEmptyList) {
+    ListS list;
+    EXPECT_EQ(list.delt(), "Список пуст.");
+}
+
+TEST(ListSTest, DelvElementNotFound) {
+    ListS list;
+    list.pushh("value1");
+    list.pushh("value2");
+    EXPECT_EQ(list.delv("value3"), "Элемент не найден.");
 }
 
 // Тест на сохранение списка в файл

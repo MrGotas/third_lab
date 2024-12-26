@@ -46,10 +46,9 @@ public:
         }
     }
 
-    void delh() {
+    string delh() {
         if (head == nullptr) {
-            cout << "Список пуст." << endl;
-            return;
+            return "Список пуст.";
         }
         Node* temp = head;
         head = head->next;
@@ -57,17 +56,17 @@ public:
             tail = nullptr;
         }
         delete temp;
+        return "good";
     }
 
-    void delt() {
+    string delt() {
         if (head == nullptr) {
-            cout << "Список пуст." << endl;
-            return;
+            return "Список пуст.";
         }
         if (head == tail) {
             delete head;
             head = tail = nullptr;
-            return;
+            return "---";
         }
         Node* current = head;
         while (current->next != tail) {
@@ -76,24 +75,23 @@ public:
         delete tail;
         tail = current;
         tail->next = nullptr;
+        return "good";
     }
 
-    void delv(const string& value) {
+    string delv(const string& value) {
         if (head == nullptr) {
-            cout << "Список пуст." << endl;
-            return;
+            return "Список пуст.";
         }
         if (head->data == value) {
             delh();
-            return;
+            return "-";
         }
         Node* current = head;
         while (current->next != nullptr && current->next->data != value) {
             current = current->next;
         }
         if (current->next == nullptr) {
-            cout << "Элемент не найден." << endl;
-            return;
+            return "Элемент не найден.";
         }
         Node* temp = current->next;
         current->next = current->next->next;
@@ -101,6 +99,7 @@ public:
             tail = current;
         }
         delete temp;
+        return " ";
     }
 
     void saveToFile(const string& filename) {
